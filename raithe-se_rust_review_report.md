@@ -14,7 +14,7 @@ Reviewed full codebase against RAiTHE coding standards. Found **47 violations** 
 
 ---
 
-## 1. Ownership & Borrowing (CRITICAL)
+## 1. Ownership & Borrowing (CRITICAL) *RESOLVED*
 
 ### ✅ VIOLATION O1:                                 *RESOLVED*
 
@@ -40,11 +40,12 @@ Arc::clone(&hnsw),
 
 ### ✅ VIOLATION O5:                                  *RESOLVED*
 
----
+//--------------------------------------------------------------------------------
 
 ## 2. Error Handling (CRITICAL)
 
 ### ❌ VIOLATION E1: `.unwrap()` in production code
+
 **Location:** `crates/serving/src/lib.rs:128-132`
 ```rust
 let bytes = base64::engine::general_purpose::STANDARD
@@ -56,27 +57,12 @@ let bytes = base64::engine::general_purpose::STANDARD
 **Impact:** Silently fails if logo corrupted; exposes empty image to users.
 **Fix:** Return `Result` or log error.
 
-### ❌ VIOLATION E2: `.unwrap()` in production code
-**Location:** `crates/indexer/src/lib.rs:185`
-```rust
-u64::from_le_bytes(bytes.try_into().unwrap())
-```
-**Rule:** `err-no-unwrap-prod`
-**Severity:** HIGH
-**Impact:** Panics on corrupted counter file; prevents index from loading.
-**Fix:** Use `expect("valid counter file")` with diagnostic message, or handle gracefully.
+### ✅ VIOLATION E2:                                 *RESOLVED*
 
-### ❌ VIOLATION E3: `.unwrap_or(0)` without context
-**Location:** `crates/indexer/src/lib.rs:410`
-```rust
-let doc_id = doc_id_ff.first(doc_addr.doc_id).unwrap_or(0);
-```
-**Rule:** `err-no-unwrap-prod`
-**Severity:** HIGH
-**Impact:** Missing doc_id returns 0, causing potential ID collision.
-**Fix:** Return `Result` or at minimum log warning.
+### ✅ VIOLATION E3:                                 *RESOLVED*
 
 ### ❌ VIOLATION E4: `anyhow::anyhow!` for library errors
+
 **Location:** `crates/crawler/src/lib.rs:126`
 ```rust
 Url::parse(url_str).map_err(|e| anyhow::anyhow!("Invalid URL {}: {}", url_str, e))?
@@ -87,12 +73,17 @@ Url::parse(url_str).map_err(|e| anyhow::anyhow!("Invalid URL {}: {}", url_str, e
 **Fix:** Add `RaitheError::InvalidUrl` variant.
 
 ### ❌ VIOLATION E5: Missing error context
+
 **Location:** `crates/ranker/src/lib.rs:45`
+
 ```rust
 fused.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
 ```
+
 **Rule:** `err-context-chain`
+
 **Severity:** LOW
+
 **Impact:** NaN scores silently treated as equal; acceptable for ranking.
 
 ### ❌ VIOLATION E6: No `?` operator usage
