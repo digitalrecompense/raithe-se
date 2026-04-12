@@ -1,0 +1,36 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/serving — HTTP serving layer and query coordination
+
+[package]
+name = "raithe-serving"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Axum HTTP serving layer and query coordinator for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+raithe-indexer = { path = "../indexer" }
+raithe-ranker = { path = "../ranker" }
+raithe-query = { path = "../query" }
+raithe-semantic = { path = "../semantic" }
+raithe-neural = { path = "../neural" }
+raithe-instant = { path = "../instant" }
+raithe-session = { path = "../session" }
+raithe-linkgraph = { path = "../linkgraph" }
+raithe-freshness = { path = "../freshness" }
+axum.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+askama.workspace = true
+governor.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+chrono.workspace = true
+base64 = "0.22"

@@ -1,0 +1,157 @@
+# © RAITHE INDUSTRIES INCORPORATED 2026
+# ===================================================================
+# RAITHE-SE .gitignore — Optimized by RAiTHE
+# ===================================================================
+# Purpose: Exclude large binary files (models, build artifacts, runtime data)
+# while keeping all source code and configuration.
+#
+# Models are downloaded at runtime from Hugging Face — see data/models/README.md
+# ===================================================================
+
+# ===================================================================
+# CORE BUILD ARTIFACTS
+# ===================================================================
+
+# Rust compilation output
+/target/
+**/*.rs.bk
+
+# Cargo.lock is OPTIONAL for libraries, OPTIONAL for binaries
+# Uncomment below if you want to exclude it (reduces diff noise)
+/#Cargo.lock
+
+# ===================================================================
+# EDITOR STATE
+# ===================================================================
+
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.lock (except Cargo.lock)
+
+# ===================================================================
+# OS NOISE
+# ===================================================================
+
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===================================================================
+# LOGS
+# ===================================================================
+
+*.log
+logs/
+
+# ===================================================================
+# CRAWLER RUNTIME STATE — Generated at runtime, never track
+# ===================================================================
+
+data/crawl-log/
+data/frontier/
+data/linkgraph/
+data/backups/
+data/index/
+data/vectors/
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# ===================================================================
+# MODEL FILES — EXCLUDE ENTIRE MODELS DIRECTORY
+# ===================================================================
+# Model weights are downloaded from Hugging Face at runtime.
+# The model directories contain multi-GB binary files that should
+# NEVER be pushed to GitHub.
+#
+# To restore models after clone:
+#   ./scripts/download-models.sh
+# Or manually: python -c "from huggingface_hub import snapshot_download; snapshot_download('sentence-transformers/all-MiniLM-L6-v2')"
+
+# Exclude entire models directory structure
+data/models/
+# But KEEP the README that explains where to download models
+!data/models/README.md
+!data/models/deberta/README.md
+!data/models/mini-lm/README.md
+!data/models/phi-2/README.md
+
+# Exclude model file patterns anywhere in the repo
+*.onnx
+*.bin
+*.pt
+*.ckpt
+*.safetensors
+*.gguf
+*.gz
+*.tar
+*.zip
+
+# Torch model files
+*.pth
+*.pkl
+*.pickle
+
+# Exclude model subdirectories
+**/model.onnx
+**/model.bin
+**/model.pt
+**/pytorch_model.bin
+**/model.safetensors
+**/tf_model.h5
+**/flax_model.msgpack
+
+# Exclude model data/cache directories
+**/archive/
+**/data.pkl
+**/version
+**/constants.pkl
+
+# ===================================================================
+# NEURAL MODEL TEMP STATE
+# ===================================================================
+
+data/models/**/cache/
+data/models/**/tmp/
+data/models/**/onnx_cache/
+data/models/**/tokenizer_cache/
+data/models/**/rust_model/
+
+# ===================================================================
+# SECRETS & LOCAL CONFIG — Use environment variables
+# ===================================================================
+
+# .env files with API keys/secrets
+.env
+.env.*
+!.env.example
+
+# Local overrides
+config.local.toml
+config.local.yaml
+config.local.json
+
+# ===================================================================
+# TEST ARTIFACTS
+# ===================================================================
+
+coverage/
+*.prof
+*.profraw
+*.flamegraph
+
+# ===================================================================
+# DOCUMENTATION GENERATED FILES
+# ===================================================================
+
+# If you generate docs locally
+/docs/
+site/
+
+# PDF/HTML reports generated from analysis
+*.report.txt
+*.report.pdf

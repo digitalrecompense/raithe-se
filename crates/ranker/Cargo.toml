@@ -1,0 +1,20 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/ranker — BM25F, GBDT, cross-encoder re-ranking
+
+[package]
+name = "raithe-ranker"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Three-phase hybrid ranking pipeline for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+tokio.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true

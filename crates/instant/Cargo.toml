@@ -1,0 +1,23 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/instant — Structured instant answers
+
+[package]
+name = "raithe-instant"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Instant answer engine: knowledge graph, computation, conversions"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+rusqlite.workspace = true
+evalexpr.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+chrono.workspace = true

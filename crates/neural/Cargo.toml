@@ -1,0 +1,20 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/neural — GPU inference manager
+
+[package]
+name = "raithe-neural"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "GPU inference manager: cross-encoder, embedder, LLM for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+ort.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+serde.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true

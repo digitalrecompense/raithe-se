@@ -1,0 +1,229 @@
+# ================================================================================
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# raithe-se — Performance Configuration
+#
+# Tuned for: Intel i9-12900K (16C/24T) | 120 GB RAM | RTX 3060 Ti (8GB) | SSD
+#
+# This machine has ~4x the CPU, ~4x the RAM, and a GPU with Tensor Cores
+# compared to the spec's i7-6700K baseline. Every parameter is scaled
+# accordingly to maximize crawl throughput, index speed, and query quality.
+#
+# Load order (Section 14.2):
+#   1. Compiled-in defaults (config.rs)
+#   2. This file (engine.toml)
+#   3. Environment variables (RAITHE__SECTION__KEY)
+#   4. CLI overrides
+#
+# Hot-reload: Changes to this file are picked up within 5 seconds.
+# ================================================================================
+
+[general]
+data_dir = "/data"
+hostname = "raithe.ca"
+log_level = "info"
+
+# ==============================================================================
+# CRAWLER — aggressive crawling, plenty of CPU headroom
+# ==============================================================================
+[crawler]
+# 24 threads available — dedicate up to 32 concurrent fetches.
+# The i9-12900K can handle the TLS/HTTP overhead easily.
+max_concurrent_requests = 32
+
+# Politeness per domain stays the same — this is about being a good citizen,
+# not about hardware limits.
+max_connections_per_host = 4
+
+# Large connection pool — 120GB RAM means we can hold many idle connections.
+total_connections = 800
+
+# 1 req/sec/domain — do NOT reduce this. Politeness is non-negotiable.
+default_crawl_delay_ms = 1000
+
+# 1 GB max body — the extra RAM lets us handle larger pages without concern.
+max_body_size = 1073741824 # 1 GB
+
+http_timeout_secs = 30
+
+# 5M domain cache in 120GB RAM is trivial (~500MB).
+robots_cache_size = 5000000
+robots_cache_ttl_secs = 86400
+
+simhash_distance_threshold = 3
+
+# With 24 threads, bandwidth monitoring thresholds can stay the same —
+# the crawler pauses for serving, which is the right behavior regardless
+# of CPU count.
+bandwidth_pause_threshold_pct = 50
+bandwidth_resume_threshold_pct = 30
+
+# 12 concurrent parse operations — the 8 P-cores handle HTML parsing easily.
+max_concurrent_parses = 12
+
+min_recrawl_interval_hours = 12
+max_recrawl_interval_days = 30
+
+# ==============================================================================
+# INDEXER — parallel merges, faster polling, larger segments
+# ==============================================================================
+[indexer]
+# 4 merge threads — the E-cores can handle background merges while P-cores
+# serve queries. On the i7-6700K this was capped at 1.
+max_merge_threads = 4
+
+# 10 GB target merge size — with fast NVMe and plenty of RAM for page cache,
+# larger segments mean fewer total segments and faster queries.
+target_merge_size_bytes = 10737418240
+
+# Allow merges even under moderate load — the CPU can handle it.
+merge_qps_threshold = 5.0
+
+# Poll every 10 seconds instead of 60 — new documents become searchable
+# 6x faster. The i9 can easily handle the overhead.
+poll_interval_secs = 10
+
+# ==============================================================================
+# RANKER — same algorithmic parameters, more candidates
+# ==============================================================================
+[ranker]
+# BM25F parameters are corpus-dependent, not hardware-dependent.
+# These are well-tuned defaults per Section 7.1.1.
+bm25f_k1 = 1.2
+bm25f_b_body = 0.75
+bm25f_b_title = 0.3
+bm25f_b_anchor = 0.1
+bm25f_w_title = 5.0
+bm25f_w_body = 1.0
+bm25f_w_anchor = 4.0
+bm25f_w_url = 2.0
+bm25f_w_headings = 2.5
+
+# More candidates = better recall. The i9 can evaluate 1000 candidates
+# in the same time the i7-6700K evaluated 500.
+bm25f_candidates = 1000
+ann_candidates = 200
+rrf_k = 60
+
+# GBDT — can afford a larger model with more CPU.
+gbdt_num_trees = 500
+gbdt_max_depth = 8
+
+# Cross-encoder — the 3060 Ti with Tensor Cores is much faster than GTX 1080.
+# Re-rank top 50 instead of 20 for better precision.
+cross_encoder_candidates = 50
+cross_encoder_query_max_tokens = 32
+cross_encoder_passage_max_tokens = 128
+cross_encoder_latency_budget_ms = 30      # Tighter budget — 3060 Ti is faster
+cross_encoder_fallback_ms = 60
+
+# ==============================================================================
+# QUERY UNDERSTANDING — tighter latency budgets
+# ==============================================================================
+[query]
+# The i9-12900K's P-cores at 5.2 GHz are ~50% faster per-thread than the
+# i7-6700K at 4.0 GHz. Tighten budgets accordingly.
+fast_path_budget_ms = 5
+enhanced_path_budget_ms = 100
+enhanced_path_fallback_ms = 200
+intent_confidence_threshold = 0.7
+enhanced_path_token_threshold = 8
+
+# Large LLM cache — 500K entries in 120GB RAM is nothing (~50MB).
+llm_cache_size = 500000
+
+spell_max_edit_short = 1
+spell_max_edit_long = 2
+synonym_weight = 0.3
+
+# ==============================================================================
+# SERVING — higher QPS ceiling
+# ==============================================================================
+[serving]
+listen_addr = "0.0.0.0"
+listen_port = 8080
+metrics_port = 9090
+
+# With 24 threads and fast CPU, can handle significantly more QPS.
+# Bandwidth is still the real ceiling for external users.
+global_qps_limit = 200
+per_ip_qps_limit = 100
+max_snippet_length = 300
+
+# ==============================================================================
+# LINK GRAPH — same algorithm, runs faster on the i9
+# ==============================================================================
+[linkgraph]
+pagerank_damping = 0.85
+pagerank_convergence_threshold = 0.000001
+pagerank_max_iterations = 50
+topic_pagerank_count = 4
+max_anchor_texts_per_url = 100
+
+# ==============================================================================
+# SEMANTIC — larger HNSW graph, more precision
+# ==============================================================================
+[semantic]
+embedding_dim = 128
+
+# Higher M and ef values improve ANN recall at the cost of memory and CPU.
+# With 120GB RAM, the memory cost is negligible.
+hnsw_m = 32                       # Up from 16 — denser graph = better recall
+hnsw_ef_construction = 200        # Up from 100 — better graph quality
+hnsw_ef_search = 100              # Up from 50 — more accurate search
+pq_sub_quantizers = 16
+
+# ==============================================================================
+# NEURAL — RTX 3060 Ti with Tensor Cores
+# ==============================================================================
+[neural]
+cross_encoder_model_path = "/data/models/cross_encoder.onnx"
+bi_encoder_model_path = "/data/models/bi_encoder.onnx"
+llm_model_path = "/data/models/query_llm.gguf"
+use_cuda = true
+
+# RTX 3060 Ti has 8GB VRAM like the GTX 1080, but with Tensor Cores
+# it runs INT8/FP16 inference ~3-4x faster. Same VRAM budget, faster
+# throughput. When models are actually loaded these allocations matter.
+cross_encoder_vram_mb = 1536
+bi_encoder_vram_mb = 512
+llm_vram_mb = 4096
+
+# ==============================================================================
+# INSTANT ANSWERS
+# ==============================================================================
+[instant]
+knowledge_db_path = "/data/knowledge/wikidata.db"
+definitions_db_path = "/data/knowledge/wiktionary.db"
+confidence_threshold = 0.8
+
+# ==============================================================================
+# STORAGE — same paths, the SSD handles the rest
+# ==============================================================================
+[storage]
+index_dir = "/data/index"
+vectors_dir = "/data/vectors"
+linkgraph_dir = "/data/linkgraph"
+crawl_log_dir = "/data/crawl-log"
+frontier_db_path = "/data/frontier/frontier.db"
+knowledge_dir = "/data/knowledge"
+models_dir = "/data/models"
+backups_dir = "/data/backups"
+
+# ==============================================================================
+# SESSION — larger cache with 120GB RAM
+# ==============================================================================
+[session]
+max_sessions = 10000              # 10x the default — RAM is plentiful
+session_ttl_secs = 3600           # 1 hour instead of 30 min
+queries_per_session = 10          # Track more history per session
+
+# ==============================================================================
+# FEATURE FLAGS — all enabled
+# ==============================================================================
+[features]
+enable_cross_encoder = true
+enable_llm_query = true
+enable_ann_retrieval = true
+enable_instant_answers = true
+enable_ai_content_detection = true
+enable_session_context = true

@@ -1,0 +1,19 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/freshness — Incremental re-crawl pipeline
+
+[package]
+name = "raithe-freshness"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "File-based incremental re-crawl pipeline for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+raithe-storage = { path = "../storage" }
+tokio.workspace = true
+tracing.workspace = true
+anyhow.workspace = true
+chrono.workspace = true

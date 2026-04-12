@@ -1,0 +1,39 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/app — Single-binary entry point
+
+[package]
+name = "raithe-se"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "raithe-se: AI-driven search engine by RAiTHE INDUSTRIES INCORPORATED"
+
+[[bin]]
+name = "raithe-se"
+path = "src/main.rs"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+raithe-storage = { path = "../storage" }
+raithe-crawler = { path = "../crawler" }
+raithe-parser = { path = "../parser" }
+raithe-indexer = { path = "../indexer" }
+raithe-ranker = { path = "../ranker" }
+raithe-query = { path = "../query" }
+raithe-serving = { path = "../serving" }
+raithe-linkgraph = { path = "../linkgraph" }
+raithe-freshness = { path = "../freshness" }
+raithe-semantic = { path = "../semantic" }
+raithe-instant = { path = "../instant" }
+raithe-neural = { path = "../neural" }
+raithe-session = { path = "../session" }
+tokio.workspace = true
+tracing.workspace = true
+anyhow.workspace = true
+figment.workspace = true
+axum.workspace = true
+
+[dev-dependencies]
+tempfile = "3.10"

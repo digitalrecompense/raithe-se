@@ -1,0 +1,22 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/semantic — Dense embedding index, HNSW ANN
+
+[package]
+name = "raithe-semantic"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "HNSW-based ANN index and embedding management for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+raithe-storage = { path = "../storage" }
+memmap2.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+serde.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+rand.workspace = true

@@ -1,0 +1,21 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/linkgraph — Link graph, PageRank, anchor text
+
+[package]
+name = "raithe-linkgraph"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Compressed link graph and PageRank computation for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+raithe-storage = { path = "../storage" }
+memmap2.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+serde.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true

@@ -1,0 +1,174 @@
+# ================================================================================
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# raithe-se — The World's Best Search Engine in Rust
+# Workspace Root Configuration
+# ================================================================================
+
+[workspace]
+resolver = "2"
+members = [
+    "crates/common",
+    "crates/metrics",
+    "crates/storage",
+    "crates/crawler",
+    "crates/parser",
+    "crates/indexer",
+    "crates/ranker",
+    "crates/query",
+    "crates/serving",
+    "crates/linkgraph",
+    "crates/freshness",
+    "crates/semantic",
+    "crates/instant",
+    "crates/neural",
+    "crates/session",
+    "crates/app",
+]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+license = "LicenseRef-Proprietary"
+authors = ["Robert Rolland \"Stone\" Perreault <robert@raithe.ca>"]
+repository = "https://github.com/digitalrecompense/raithe-se"
+description = "raithe-se — AI-driven search engine built by RAiTHE INDUSTRIES INCORPORATED"
+
+# ================================================================================
+# Shared dependency versions (Section 2.1 — workspace.dependencies)
+# ================================================================================
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.37", features = ["full"] }
+
+# HTTP client (crawler)
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "gzip", "brotli", "http2", "stream"] }
+
+# TLS
+rustls = "0.23"
+
+# HTML streaming parse
+lol_html = "1.2"
+
+# HTML DOM parse (fallback)
+scraper = "0.19"
+
+# Tokenization
+unicode-segmentation = "1.11"
+unicode-normalization = "0.1"
+
+# Stemming
+rust-stemmers = "1.2"
+
+# Full-text index engine
+tantivy = "0.22"
+
+# Compression
+zstd = "0.13"
+
+# Serialization (crawl output)
+flatbuffers = "24.3"
+
+# HTTP serving
+axum = { version = "0.7", features = ["http2"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "compression-full", "trace"] }
+
+# Templating
+askama = "0.12"
+
+# Metrics
+prometheus = "0.13"
+
+# Tracing / logging
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+
+# Config
+figment = { version = "0.10", features = ["toml", "env"] }
+
+# SQLite (frontier / dedup / knowledge graph)
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# In-memory cache
+moka = { version = "0.12", features = ["future", "sync"] }
+
+# Rate limiting
+governor = "0.6"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# ML inference (GPU — ONNX Runtime with CUDA EP)
+# NOTE: ort 2.0 stable has not been released yet. Using latest RC.
+# The spec calls for 2.0+; update to stable when available.
+# Using load-dynamic to avoid glibc version mismatch with prebuilt ort-sys.
+# At runtime, ort loads libonnxruntime.so via dlopen. If the library is not
+# installed, the neural crate gracefully degrades (Section 1.1).
+ort = { version = "2.0.0-rc.12", features = ["cuda", "load-dynamic"] }
+
+# LLM inference (alternative — llama.cpp)
+# llama-cpp-rs = "0.3"   # Uncomment when building with llama.cpp support
+
+# File watching (config hot-reload)
+notify = "6.0"
+
+# Property testing
+proptest = "1.4"
+
+# Benchmarking
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# SimHash
+# Using custom implementation (see crates/common/src/simhash.rs)
+
+# HNSW (ANN index)
+# hnsw_rs = "0.3"   # Or custom implementation in crates/semantic
+
+# Expression evaluation (instant answers)
+evalexpr = "11.0"
+
+# DNS resolver
+trust-dns-resolver = "0.23"
+
+# Session / cookies
+cookie = "0.18"
+rand = "0.8"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Byte utilities
+bytes = "1.6"
+
+# Memory mapping
+memmap2 = "0.9"
+
+# Chrono for timestamps
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID generation
+uuid = { version = "1.0", features = ["v4"] }
+
+# URL parsing and normalization
+url = "2.5"
+
+# ================================================================================
+# Profile Configuration (Section 2.2)
+# ================================================================================
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+opt-level = 3
+
+[profile.bench]
+inherits = "release"
+debug = true   # for flamegraphs
+
+[profile.dev]
+opt-level = 1
+debug = 2      # keeps iteration fast

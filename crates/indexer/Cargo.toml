@@ -1,0 +1,31 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/indexer — Inverted index construction via Tantivy
+
+[package]
+name = "raithe-indexer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Tantivy-backed inverted index for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+raithe-metrics = { path = "../metrics" }
+raithe-storage = { path = "../storage" }
+raithe-parser = { path = "../parser" }
+raithe-freshness = { path = "../freshness" }
+raithe-neural = { path = "../neural" }
+raithe-semantic = { path = "../semantic" }
+tantivy.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+unicode-segmentation.workspace = true
+unicode-normalization.workspace = true
+rust-stemmers.workspace = true
+url.workspace = true

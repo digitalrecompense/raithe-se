@@ -1,0 +1,18 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/session — Session context tracking
+
+[package]
+name = "raithe-session"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "In-memory session context tracking for raithe-se"
+
+[dependencies]
+raithe-common = { path = "../common" }
+moka.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+anyhow.workspace = true
+uuid.workspace = true

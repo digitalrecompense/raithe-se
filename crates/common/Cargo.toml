@@ -1,0 +1,28 @@
+# © RAiTHE INDUSTRIES INCORPORATED 2026
+# crates/common — Shared types, error handling, config loading, feature flags
+
+[package]
+name = "raithe-common"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Shared types, error handling, config, and feature flags for raithe-se"
+
+[dependencies]
+thiserror.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+figment.workspace = true
+tracing.workspace = true
+notify.workspace = true
+chrono.workspace = true
+uuid.workspace = true
+url.workspace = true
+bytes.workspace = true
+memmap2.workspace = true
+tokio = { workspace = true, features = ["sync", "fs"] }
+
+[dev-dependencies]
+proptest.workspace = true
